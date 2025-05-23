@@ -1,31 +1,21 @@
 ﻿using chocobot_racing;
 using chocobot_racing.Constants;
 using DSharpPlus;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-var hostBuilder = Host.CreateApplicationBuilder();
+var hostBuilder = Host.CreateApplicationBuilder()
+                      .ConfigureEnvironmentVariables()
+                      .Configuration
+                        .GetValueOrExit(ConfigKeys.FeInfoApiKey, out var apiKey)
+                        .GetValueOrExit(ConfigKeys.FeInfoUrl, out var baseAddress)
+                        .GetValueOrExit(ConfigKeys.DiscordToken, out var discordToken);
 
-#if DEBUG
-hostBuilder.Configuration.AddEnvironmentVariables(prefix: "DB_CR_");
-#else
-hostBuilder.Configuration.AddEnvironmentVariables(prefix: "CR_");
-#endif
-
-var feInfoClient = new FeInfoHttpClient(
-        apiKey: hostBuilder.Configuration.GetValue(ConfigKeys.FeInfoApiKey, string.Empty),
-        baseAddress: hostBuilder.Configuration.GetValue(ConfigKeys.FeInfoUrl, string.Empty)
-    );
-
-var token = hostBuilder.Configuration.GetValue(ConfigKeys.BotToken, "");
-
-if (string.IsNullOrWhiteSpace(token))
-    throw new NullReferenceException($"{nameof(token)} is invalid. Check environment variables");
+var feInfoClient = new FeInfoHttpClient(apiKey, new Uri(baseAddress));
 
 var discordClient = DiscordClientBuilder
-                .CreateDefault(token: token, intents: DiscordIntents.AllUnprivileged)
+                .CreateDefault(token: discordToken, intents: DiscordIntents.AllUnprivileged)
                 .ConfigureServices(a => a
                     .AddLogging(log => log.AddConsole())
                     .AddSingleton(service => feInfoClient)
