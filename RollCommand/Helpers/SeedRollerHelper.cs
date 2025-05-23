@@ -73,17 +73,12 @@ public static class SeedRollerHelper
             tries++;
         }
 
-        if (progressResponse.Error.HasContent())
+        return progressResponse switch
         {
-            return SetError<SeedResponse>(progressResponse.Error);
-        }
-
-        if (string.IsNullOrWhiteSpace(progressResponse.seed_id))
-        {
-            return SetError<SeedResponse>("API seems to be not responding");
-        }
-
-        return await GetGeneratedSeedAsync(client, api, apiKey, progressResponse.seed_id);
+            { Error: var error } when error.HasContent() => SetError<SeedResponse>(progressResponse.Error),
+            { seed_id: var seedId } when string.IsNullOrWhiteSpace(seedId) => SetError<SeedResponse>("API seems to be not responding"),
+            _ => await GetGeneratedSeedAsync(client, api, apiKey, progressResponse.seed_id)
+        };
     }
 
     private static async Task<SeedResponse> GetGeneratedSeedAsync(HttpClient client, FeHostedApi api, string apiKey, string seedId)
