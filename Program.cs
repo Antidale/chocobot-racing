@@ -12,13 +12,11 @@ var hostBuilder = Host.CreateApplicationBuilder()
                         .GetValueOrExit(ConfigKeys.FeInfoUrl, out var baseAddress)
                         .GetValueOrExit(ConfigKeys.DiscordToken, out var discordToken);
 
-var feInfoClient = new FeInfoHttpClient(apiKey, new Uri(baseAddress));
-
 var discordClient = DiscordClientBuilder
                 .CreateDefault(token: discordToken, intents: DiscordIntents.AllUnprivileged)
                 .ConfigureServices(a => a
                     .AddLogging(log => log.AddConsole())
-                    .AddSingleton(service => feInfoClient)
+                    .AddSingleton(service => new FeInfoHttpClient(apiKey, new Uri(baseAddress)))
                     .AddSingleton(service => new FeGenerationHttpClient()))
                 .AddCommands()
                 .Build();
