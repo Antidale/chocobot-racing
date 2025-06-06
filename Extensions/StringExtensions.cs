@@ -14,4 +14,6 @@ public static class StringExtensions
             Environment.Exit(exitCode: 1);
         }
     }
+
+    public static string SortFlags(this string value) => string.Join(' ', value.Split(' ').OrderBy(x => x)).Trim();
 }

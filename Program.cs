@@ -10,7 +10,11 @@ var hostBuilder = Host.CreateApplicationBuilder()
                       .Configuration
                         .GetValueOrExit(ConfigKeys.FeInfoApiKey, out var apiKey)
                         .GetValueOrExit(ConfigKeys.FeInfoUrl, out var baseAddress)
+#if DEBUG
                         .GetValueOrExit(ConfigKeys.DiscordToken, out var discordToken);
+#else
+                        .GetValueOrExit(ConfigKeys.DiscordToken);
+#endif
 
 var discordClient = DiscordClientBuilder
                 .CreateDefault(token: discordToken, intents: DiscordIntents.AllUnprivileged)

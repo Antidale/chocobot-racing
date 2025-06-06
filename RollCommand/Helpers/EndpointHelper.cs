@@ -26,6 +26,7 @@ public static class EndpointHelper
 #endif
         FeHostedApi.Main => "http://ff4fe.com/api/",
         FeHostedApi.Galeswift => "https://ff4fe.galeswift.com/api/",
+        FeHostedApi.Alpha => "https://alpha.ff4fe.com/api/",
         _ => ""
     };
 }
