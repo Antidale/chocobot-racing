@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using chocobot_racing.Constants;
-using DSharpPlus.Commands;
-using DSharpPlus.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace chocobot_racing.Extensions
@@ -54,10 +52,10 @@ namespace chocobot_racing.Extensions
                 ctx.Client.Logger.LogError(message: ex.ToString());
             }
 
-            var guild = ctx.Client.Guilds[GuildIds.BotHome];
+            var guild = ctx.Client.Guilds[GuildIds.AntiServer];
             if (guild is null) { return; }
 
-            var channel = guild.Channels[ChannelIds.BotLogsChannelId];
+            var channel = guild.Channels[ChannelIds.AntiServerBotTestingChannelId];
             if (channel is null) { return; }
 
             //Odds are good we don't need the whole message here, and this feels like a good enough arbitrary number to know what's going on.
@@ -77,10 +75,10 @@ namespace chocobot_racing.Extensions
 
         public static async Task LogUsageAsync(this CommandContext ctx)
         {
-            var guild = ctx.Client.Guilds[GuildIds.BotHome];
+            var guild = ctx.Client.Guilds[GuildIds.AntiServer];
             if (guild is null) { return; }
 
-            var channel = guild.Channels[ChannelIds.BotUsageChannelId];
+            var channel = guild.Channels[ChannelIds.AntiServerBotTestingChannelId];
             if (channel is null) { return; }
 
             var invokingGuild = ctx.Guild;
