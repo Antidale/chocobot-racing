@@ -9,5 +9,7 @@
         public const ulong WorkshopAsyncCategory = 551275948880822292;
         public const ulong RaceAlertsChannelId = 438195383185702912;
         public const ulong AntiServerBotTestingChannelId = 699045311452020746;
+        public const ulong AntiServerRaceAlertsId = 985334647049297972;
+        public const ulong WorkshopRaceAlertsId = 438195383185702912;
     }
 }

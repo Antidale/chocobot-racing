@@ -10,6 +10,22 @@ public enum FePresetChoices
     FBF,
     [ChoiceDisplayName("Zemus Zone: Anthology")]
     ZZA,
+
+    //Temporarily put the 5.0 presets high up in the list
+    [ChoiceDisplayName("Intro to Kchar (5.0)")]
+    KcharIntro,
+    [ChoiceDisplayName("Plink Pony Club (5.0)")]
+    PlinkPonyClub,
+    [ChoiceDisplayName("Holding Out for a Hero (5.0)")]
+    HeroHold,
+    [ChoiceDisplayName("Dark Matter, 5.0 Edition (5.0)")]
+    DarkMatter5,
+    [ChoiceDisplayName("You Spoony Ninja (5.0)")]
+    SpoonyNinja,
+    [ChoiceDisplayName("Angry Bird (5.0)")]
+    AngryBird,
+
+    //rest of the default presets
     [ChoiceDisplayName("Adamant Cup Group")]
     AdamantCupGroup,
     [ChoiceDisplayName("Adamant Cup Bracket")]

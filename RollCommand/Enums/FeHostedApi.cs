@@ -14,4 +14,7 @@ public enum FeHostedApi
 
     [ChoiceDisplayName("Galeswift")]
     Galeswift,
+
+    [ChoiceDisplayName("5.0 Alpha")]
+    Alpha
 }
