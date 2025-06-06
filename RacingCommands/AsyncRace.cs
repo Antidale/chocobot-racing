@@ -9,12 +9,11 @@ namespace chocobot_racing.RacingCommands;
 
 [Command("async"), InteractionInstallType(DiscordApplicationIntegrationType.GuildInstall)]
 [RequireGuild]
-public class CreateAsyncRace(GuildConfigurationHelper configurationHelper)
+public class AsyncRace(GuildConfigurationHelper configurationHelper)
 {
     private readonly string alphaNumerics = "abcdefghjkmnpqrstvwxyz1234567890";
     [Command("create-async")]
     [Description("creat an async race")]
-    [RequireGuild]
     public async Task CreateAsyncRaceAsync(
         SlashCommandContext ctx,
         [Parameter("description")]
@@ -51,8 +50,8 @@ public class CreateAsyncRace(GuildConfigurationHelper configurationHelper)
             return;
         }
 
-        //TODO: use correct role
-        var racebotRoleSuccess = ctx.Guild!.Roles.TryGetValue(1178819176320737394, out var racebotRole);
+        //TODO: use correct role, currently using Racingway's role in my test server
+        var racebotRoleSuccess = ctx.Guild!.Roles.TryGetValue(1380349994053144708, out var racebotRole);
 
         if (!racebotRoleSuccess)
         {
@@ -61,7 +60,7 @@ public class CreateAsyncRace(GuildConfigurationHelper configurationHelper)
         }
 
         var everyonePermissions = PermissionsHelper.GetDenyEveryonePermissionSet(everyoneRole);
-        var botPermissions = PermissionsHelper.GetAllowBotAndAdminPermissionSet(racebotAdminRole!);
+        var botPermissions = PermissionsHelper.GetAllowBotAndAdminPermissionSet(racebotRole!);
         var adminPermissions = PermissionsHelper.GetAllowBotAndAdminPermissionSet(racebotAdminRole!);
 
         List<DiscordOverwriteBuilder> permissions = [everyonePermissions, botPermissions, adminPermissions];
@@ -85,5 +84,38 @@ public class CreateAsyncRace(GuildConfigurationHelper configurationHelper)
 
         //todo Log channels created to a database to be able to delete later
         await ctx.RespondAsync("channel created!");
+    }
+
+    [Command("join")]
+    [Description("join an async race")]
+    public async Task JoinAsync(SlashCommandContext ctx,
+    [Parameter("race-room")]
+    [Description("a specific race to join")]
+    string roomName)
+    {
+        await ctx.DeferResponseAsync(ephemeral: true);
+
+        //Current: look up room and assign the user the rights to be there. Eventually this might be convered by button interactions?
+        var potentialRoom = ctx.Guild!.Channels.FirstOrDefault(x => x.Value.Name.Equals(roomName, StringComparison.InvariantCultureIgnoreCase)).Value;
+
+        if (potentialRoom is null)
+        {
+            await ctx.EditResponseAsync($"Could not find room {roomName} in this server");
+            return;
+        }
+
+        var member = ctx.Member;
+        if (member is null)
+        {
+            await ctx.EditResponseAsync("You must be a member of the server to join asyncs there");
+            return;
+        }
+
+        var stuff = potentialRoom.AddOverwriteAsync(member, PermissionsHelper.BasicPermissions);
+
+        //TODO: Log user joining room to api and/or local db. Make sure we have enough info to send them a DM later when the room closes
+
+        await ctx.RespondAsync($"<#{potentialRoom.Id}>");
+
     }
 }

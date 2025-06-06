@@ -18,7 +18,7 @@ public static class DiscordConfiguration
         {
             commands.AddProcessor(new SlashCommandProcessor());
             commands.AddCommands<SeedRoller>();
-            commands.AddCommands<CreateAsyncRace>();
+            commands.AddCommands<AsyncRace>();
             commands.AddCommands<CreateRacetimeRace>();
 
             commands.CommandExecuted += CommandsEventHanlders.OnCommandInvokedAsync;
