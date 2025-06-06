@@ -71,6 +71,8 @@ public class CreateRace
             parent: category,
             overwrites: permissions
             );
+
+        //todo Log channels created to a database to be able to delete later
         await ctx.RespondAsync("channel created!");
 
     }
