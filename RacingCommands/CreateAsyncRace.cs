@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace chocobot_racing.RacingCommands;
 
-public class CreateRace
+public class CreateAsyncRace
 {
 
     private readonly string alphaNumerics = "abcdefghjkmnpqrstvwxyz1234567890";
