@@ -2,7 +2,7 @@ namespace chocobot_racing.RacingCommands.Helpers;
 
 public static class PermissionsHelper
 {
-    private static DiscordPermissions BasicPermissions => new DiscordPermissions().Add(DiscordPermission.ViewChannel, DiscordPermission.SendMessages);
+    public static DiscordPermissions BasicPermissions => new DiscordPermissions().Add(DiscordPermission.ViewChannel, DiscordPermission.SendMessages);
 
     private static DiscordPermissions AdminPermissions => new DiscordPermissions().Add(DiscordPermission.ViewChannel, DiscordPermission.ManageChannels, DiscordPermission.SendMessages, DiscordPermission.ManageMessages);
 
