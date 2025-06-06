@@ -11,7 +11,7 @@ var hostBuilder = Host.CreateApplicationBuilder()
                         .GetValueOrExit(ConfigKeys.FeInfoApiKey, out var apiKey)
                         .GetValueOrExit(ConfigKeys.FeInfoUrl, out var baseAddress)
 #if DEBUG
-                        .GetValueOrExit(ConfigKeys.DiscordToken, out var discordToken);
+                        .GetValueOrExit(ConfigKeys.DiscordDebugToken, out var discordToken);
 #else
                         .GetValueOrExit(ConfigKeys.DiscordToken);
 #endif

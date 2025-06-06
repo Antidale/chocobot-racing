@@ -1,4 +1,5 @@
 using chocobot_racing.EventHandlers;
+using chocobot_racing.RacingCommands;
 using chocobot_racing.RollCommand;
 using DSharpPlus;
 
@@ -17,7 +18,8 @@ public static class DiscordConfiguration
         {
             commands.AddProcessor(new SlashCommandProcessor());
             commands.AddCommands<SeedRoller>();
-
+            commands.AddCommands<CreateAsyncRace>();
+            commands.AddCommands<CreateRacetimeRace>();
 
             commands.CommandExecuted += CommandsEventHanlders.OnCommandInvokedAsync;
 
