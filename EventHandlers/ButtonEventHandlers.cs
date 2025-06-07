@@ -1,4 +1,3 @@
-using System;
 using chocobot_racing.RacingCommands.Helpers;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
@@ -11,36 +10,38 @@ public class ButtonEventHandlers
     {
         await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.DeferredMessageUpdate);
 
+        var followUpBuilder = new DiscordFollowupMessageBuilder().AsEphemeral();
+
         var buttonData = e.Id.Split("|");
         if (e.Guild?.Id.ToString() != buttonData.First())
         {
-            await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder().WithContent("invalid guild"));
+            await e.Interaction.CreateFollowupMessageAsync(followUpBuilder.WithContent("invalid guild"));
             return;
         }
 
         if (!ulong.TryParse(buttonData.First(), out var guildId))
         {
-            await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder().WithContent("invalid guild"));
+            await e.Interaction.CreateFollowupMessageAsync(followUpBuilder.WithContent("invalid guild"));
             return;
         }
 
         if (!ulong.TryParse(buttonData.Skip(1).First(), out var channelId))
         {
-            await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder().WithContent("invalid channel")); return;
+            await e.Interaction.CreateFollowupMessageAsync(followUpBuilder.WithContent("invalid channel")); return;
         }
 
         var member = await e.Guild.GetMemberAsync(e.Interaction.User.Id);
 
         if (member is null)
         {
-            await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder().WithContent("invalid guild"));
+            await e.Interaction.CreateFollowupMessageAsync(followUpBuilder.WithContent("invalid guild"));
             return;
         }
 
         //Current: look up room and assign the user the rights to be there. Eventually this might be convered by button interactions?
         if (!e.Guild!.Channels.TryGetValue(channelId, out var potentialRoom))
         {
-            await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder().WithContent("invalid channel"));
+            await e.Interaction.CreateFollowupMessageAsync(followUpBuilder.WithContent("invalid channel"));
             return;
         }
 
@@ -51,8 +52,7 @@ public class ButtonEventHandlers
             channel.PermissionOverwrites = overwrites;
         });
 
-        await e.Interaction.CreateFollowupMessageAsync(
-            new DiscordFollowupMessageBuilder()
+        await e.Interaction.CreateFollowupMessageAsync(followUpBuilder
                 .WithContent($"Join successful! {Formatter.Mention(potentialRoom)}")
                 .AsEphemeral());
 
