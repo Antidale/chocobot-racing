@@ -56,6 +56,10 @@ public class ButtonEventHandlers
                 .WithContent($"Join successful! {Formatter.Mention(potentialRoom)}")
                 .AsEphemeral());
 
-        await potentialRoom.SendMessageAsync($"{member.DisplayName} joined the race!");
+        if (buttonData.Last().Equals("join", StringComparison.InvariantCultureIgnoreCase))
+        {
+            await potentialRoom.SendMessageAsync($"{member.DisplayName} joined the race!");
+        }
+
     }
 }
