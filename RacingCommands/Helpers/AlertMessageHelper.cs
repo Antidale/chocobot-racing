@@ -6,12 +6,12 @@ namespace chocobot_racing.RacingCommands.Helpers;
 
 public class AlertMessageHelper
 {
-    public static DiscordMessageBuilder CreateAlertMessage(SlashCommandContext ctx, string description, string raceUrl, bool shouldPing, RtggGoal goal)
+    public static DiscordMessageBuilder CreateAlertMessage(string memberDisplayName, string description, string raceUrl, DiscordRole? role, RtggGoal goal)
     {
         var raceDetailsText =
 @$"**Goal**: {goal.GetAttribute<ChoiceDisplayNameAttribute>()?.DisplayName ?? goal.ToString()}
 **URL**: {raceUrl}
--# **Created by**: {ctx.Member!.DisplayName}";
+-# **Created by**: {memberDisplayName}";
 
         var messageBuilder = new DiscordMessageBuilder()
             .EnableV2Components()
@@ -23,7 +23,7 @@ public class AlertMessageHelper
                 color: goal.GetAttribute<DiscordColorAttribute>()?.Color
             ));
 
-        AddRolePing(ctx, messageBuilder, shouldPing);
+        AddRolePing(role, messageBuilder);
 
         return messageBuilder;
     }
@@ -60,22 +60,39 @@ public class AlertMessageHelper
         return messageBuilder;
     }
 
-    private static void AddRolePing(SlashCommandContext ctx, DiscordMessageBuilder messageBuilder, bool shouldPing)
+    public static DiscordMessageBuilder CreateAsyncAlert(string memberDisplayName, string roomName, ulong raceRoomId, ulong guildId, int entrantCount = 0, string status = "open", string flags = "", string link = "")
     {
-        //Don't have the workshop's ping-to-race role ID to just hard code so we have to pull it from the context
-        var pingRole = ctx.Guild?.Roles.FirstOrDefault(x =>
-            x.Value.Name
-                .Replace("-", string.Empty)
-                .Replace("_", string.Empty)
-                .Equals("pingtorace", StringComparison.InvariantCultureIgnoreCase))
-            .Value;
+        //TODO buid this message better, and possibly take in an object encapsulating all this stuff rather than the huge mess of params?
+        var raceDetailsText = @$"### {roomName}
+**Flags**: To Be Rolled
+**Link**: To be Rolled
+**Status**: {status}
+**Entrants**: {entrantCount}
+**Created By**: {memberDisplayName}";
 
-        if (pingRole is null) { shouldPing = false; }
+        var buttonBase = $"{guildId}|{raceRoomId}|";
+        var joinButton = new DiscordButtonComponent(DiscordButtonStyle.Primary, $"{buttonBase}join", "join");
+        var watchButton = new DiscordButtonComponent(DiscordButtonStyle.Secondary, $"{buttonBase}watch", "watch");
 
-        if (shouldPing)
+        var messageBuilder = new DiscordMessageBuilder()
+            .EnableV2Components()
+            .AddContainerComponent(new DiscordContainerComponent(
+                [
+                    new DiscordTextDisplayComponent(raceDetailsText),
+                    new DiscordActionRowComponent([joinButton, watchButton])
+                ],
+                color: DiscordColor.SapGreen
+            ));
+
+        return messageBuilder;
+    }
+
+    private static void AddRolePing(DiscordRole? role, DiscordMessageBuilder messageBuilder)
+    {
+        if (role is not null)
         {
-            messageBuilder.AddTextDisplayComponent(new DiscordTextDisplayComponent($"{pingRole!.Mention}"));
-            messageBuilder.WithAllowedMention(new RoleMention(pingRole!));
+            messageBuilder.AddTextDisplayComponent(new DiscordTextDisplayComponent($"{role.Mention}"));
+            messageBuilder.WithAllowedMention(new RoleMention(role));
         }
     }
 }
