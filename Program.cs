@@ -1,5 +1,6 @@
 ﻿using chocobot_racing;
 using chocobot_racing.Constants;
+using chocobot_racing.EventHandlers;
 using chocobot_racing.Helpers;
 using DSharpPlus;
 using FeInfo.Common.DTOs;
@@ -30,7 +31,13 @@ var discordClient = DiscordClientBuilder
                     .AddSingleton(service => new FeGenerationHttpClient())
                     .AddSingleton(service => new RacetimeHttpClient())
                     .AddSingleton(service => configHelper))
+                .ConfigureEventHandlers(client =>
+                {
+                  client.HandleComponentInteractionCreated(ButtonEventHandlers.OnButtonClick);
+
+                })
                 .AddCommands()
+
                 .Build();
 
 await discordClient.ConnectAsync();

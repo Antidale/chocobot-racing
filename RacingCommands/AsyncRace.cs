@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
+using System.Threading.Channels;
+using chocobot_racing.Constants;
 using chocobot_racing.Helpers;
 using chocobot_racing.RacingCommands.Helpers;
 using DSharpPlus.Commands.Processors.SlashCommands.Metadata;
@@ -23,6 +25,12 @@ public class AsyncRace(GuildConfigurationHelper configurationHelper)
     )
     {
         await ctx.DeferResponseAsync(ephemeral: true);
+
+        var alertsChannelId = ChannelIds.WorkshopRaceAlertsId;
+
+#if DEBUG
+        alertsChannelId = ChannelIds.AntiServerRaceAlertsId;
+#endif
 
         var guildId = ctx.Guild!.Id;
         configurationHelper.GuildConfigurations.TryGetValue(guildId, out var guildConfiguration);
@@ -73,6 +81,10 @@ public class AsyncRace(GuildConfigurationHelper configurationHelper)
             overwrites: permissions
             );
 
+        var message = await newChannel.SendMessageAsync("new race channel!");
+
+        await message.PinAsync();
+
         var spoilerChannel = await ctx.Guild!.CreateChannelAsync(
             name: $"{channelBaseName}-spoilers",
             type: DiscordChannelType.Text,
@@ -80,10 +92,22 @@ public class AsyncRace(GuildConfigurationHelper configurationHelper)
             overwrites: permissions
             );
 
+        var leaderboard = await spoilerChannel.SendMessageAsync("leaderboard post");
+        await leaderboard.PinAsync();
+        //TODO: store this message id so that we can update the leaderboard as people finish
+
         //TODO: sent alert message, which requires moving AlterHelper out a bit, or creating one specifically for asyncs
 
         //todo Log channels created to a database to be able to delete later
         await ctx.RespondAsync("channel created!");
+
+        var alertMessage = AlertMessageHelper.CreateAsyncAlert(ctx.Member!.DisplayName, description, newChannel.Id, ctx.Guild.Id);
+        if (!ctx.Guild!.Channels.TryGetValue(alertsChannelId, out var alertsChannel))
+        {
+            return;
+        }
+
+        await alertsChannel.SendMessageAsync(alertMessage);
     }
 
     [Command("join")]
@@ -111,11 +135,21 @@ public class AsyncRace(GuildConfigurationHelper configurationHelper)
             return;
         }
 
-        var stuff = potentialRoom.AddOverwriteAsync(member, PermissionsHelper.BasicPermissions);
+        //TODO: see if the person is already in the race, if they are, let them know but don't do anything else.
+
+
+        var overwrites = potentialRoom.PermissionOverwrites.Select(x => DiscordOverwriteBuilder.From(x)).Append(PermissionsHelper.GetAllowUserPermissionSet(member));
+
+        await potentialRoom.ModifyAsync((channel) =>
+        {
+            channel.PermissionOverwrites = overwrites;
+        });
+
 
         //TODO: Log user joining room to api and/or local db. Make sure we have enough info to send them a DM later when the room closes
+        await ctx.RespondAsync($"Join successful! <#{potentialRoom.Id}>");
 
-        await ctx.RespondAsync($"<#{potentialRoom.Id}>");
+        await potentialRoom.SendMessageAsync($"{member.DisplayName} joined the race!");
 
     }
 }

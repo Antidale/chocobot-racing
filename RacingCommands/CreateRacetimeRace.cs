@@ -61,7 +61,9 @@ public class CreateRacetimeRace(RacetimeHttpClient client)
             return;
         }
 
-        var alertMessage = AlertMessageHelper.CreateAlertMessage(ctx, description, raceUrl, includePing, goal);
+        var pingRole = ctx.Guild.GetDiscordRole("pingtorace");
+
+        var alertMessage = AlertMessageHelper.CreateAlertMessage(ctx.Member!.DisplayName, description, raceUrl, pingRole, goal);
 
         await alertsChannel.SendMessageAsync(alertMessage);
     }
