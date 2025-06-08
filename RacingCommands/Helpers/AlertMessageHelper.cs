@@ -6,10 +6,11 @@ namespace chocobot_racing.RacingCommands.Helpers;
 
 public class AlertMessageHelper
 {
-    public static DiscordMessageBuilder CreateAlertMessage(string memberDisplayName, string description, string raceUrl, DiscordRole? role, RtggGoal goal)
+    public static DiscordMessageBuilder CreateAlertMessage(string memberDisplayName, string description, string raceUrl, DiscordRole? role, RtggGoal goal, RaceSettings raceSettings)
     {
         var raceDetailsText =
 @$"**Goal**: {goal.GetAttribute<ChoiceDisplayNameAttribute>()?.DisplayName ?? goal.ToString()}
+**Settings**: {raceSettings.GetAttribute<ChoiceDisplayNameAttribute>()?.DisplayName ?? raceSettings.ToString()}
 **URL**: {raceUrl}
 -# **Created by**: {memberDisplayName}";
 
