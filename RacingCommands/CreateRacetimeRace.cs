@@ -19,6 +19,9 @@ public class CreateRacetimeRace(RacetimeHttpClient client)
         [Parameter("goal")]
         [Description("rt.gg category")]
         RtggGoal goal,
+        [Parameter("settings")]
+        [Description("strict or casual settings")]
+        RaceSettings settings,
         [Parameter("ping-alert-role")]
         [Description("include a ping to ping-to-race")]
         bool includePing = true
@@ -44,6 +47,8 @@ public class CreateRacetimeRace(RacetimeHttpClient client)
         var response = await client.CreateRaceAsync(new()
         {
             Goal = goal.GetAttribute<ChoiceDisplayNameAttribute>()?.DisplayName ?? goal.ToString(),
+            StreamingRequired = settings == RaceSettings.Strict,
+            AllowNonEntrantChat = settings == RaceSettings.Casual,
             InfoUser = description,
         });
 
@@ -63,7 +68,7 @@ public class CreateRacetimeRace(RacetimeHttpClient client)
 
         var pingRole = ctx.Guild.GetDiscordRole("pingtorace");
 
-        var alertMessage = AlertMessageHelper.CreateAlertMessage(ctx.Member!.DisplayName, description, raceUrl, pingRole, goal);
+        var alertMessage = AlertMessageHelper.CreateAlertMessage(ctx.Member!.DisplayName, description, raceUrl, pingRole, goal, settings);
 
         await alertsChannel.SendMessageAsync(alertMessage);
     }
