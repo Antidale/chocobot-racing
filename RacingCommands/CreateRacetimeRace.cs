@@ -48,7 +48,6 @@ public class CreateRacetimeRace(RacetimeHttpClient client)
         {
             Goal = goal.GetAttribute<ChoiceDisplayNameAttribute>()?.DisplayName ?? goal.ToString(),
             StreamingRequired = settings == RaceSettings.Strict,
-            AllowNonEntrantChat = settings == RaceSettings.Casual,
             InfoUser = description,
         });
 
