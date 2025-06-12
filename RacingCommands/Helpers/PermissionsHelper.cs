@@ -11,4 +11,10 @@ public static class PermissionsHelper
     public static DiscordOverwriteBuilder GetAllowBotAndAdminPermissionSet(DiscordRole role) => new DiscordOverwriteBuilder(role).Allow(AdminPermissions);
 
     public static DiscordOverwriteBuilder GetAllowUserPermissionSet(DiscordMember member) => new DiscordOverwriteBuilder(member).Allow(BasicPermissions);
+
+    public static List<DiscordOverwriteBuilder> GetStandardRoomPermissions(DiscordRole everyone, DiscordRole bot, DiscordRole raceAdimin) => [
+            GetDenyEveryonePermissionSet(everyone),
+            GetAllowBotAndAdminPermissionSet(bot),
+            GetAllowBotAndAdminPermissionSet(raceAdimin)
+    ];
 }
