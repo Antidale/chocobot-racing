@@ -5,13 +5,15 @@ using chocobot_racing.RollCommand.Enums;
 using chocobot_racing.RollCommand.Helpers;
 using DSharpPlus.Commands.ArgumentModifiers;
 using DSharpPlus.Commands.Trees.Metadata;
+using FeInfo.Common.DTOs;
+using FeInfo.Common.Requests;
 
 namespace chocobot_racing.RollCommand;
 
 [Command("roll")]
 [Description("A set of commands for rolling seeds")]
 [AllowDMUsage]
-public class SeedRoller(FeGenerationHttpClient client)
+public class SeedRoller(FeGenerationHttpClient client, FeInfoHttpClient feInfoHttpClient)
 {
     [Command("flags")]
     [Description("Generate a seed from an arbitrary flag string")]
@@ -79,10 +81,19 @@ public class SeedRoller(FeGenerationHttpClient client)
         {
             await ctx.EditResponseAsync($"Error rolling seed: {response.Error}");
             await ctx.LogErrorAsync(response.Error);
+            return;
         }
-        else
+
+        var messages = response.ToMessageBuilders(generateRequest.flags, generateRequest.seed);
+        await ctx.EditResponseAsync(messages.First());
+        messages.RemoveAt(0);
+        foreach (var message in messages)
         {
-            await ctx.EditResponseAsync(response.ToEmbedList(generateRequest.flags, generateRequest.seed));
+            await ctx.FollowupAsync(message);
         }
+
+        var seedInfo = new LogSeedRoled(ctx.User.Id, new SeedInformation(response.Version, response.Seed, response.Flags, response.Verification, response.Url));
+
+        await SeedRollerHelper.LogRolledSeedAsync(feInfoHttpClient, seedInfo);
     }
 }

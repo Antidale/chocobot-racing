@@ -3,6 +3,7 @@ using chocobot_racing.Constants;
 using chocobot_racing.DTOs;
 using chocobot_racing.RollCommand.DTOs;
 using chocobot_racing.RollCommand.Enums;
+using FeInfo.Common.Requests;
 using static chocobot_racing.RollCommand.DTOs.FeApiResponse;
 using static chocobot_racing.RollCommand.Helpers.EndpointHelper;
 
@@ -79,6 +80,18 @@ public static class SeedRollerHelper
             { seed_id: var seedId } when string.IsNullOrWhiteSpace(seedId) => SetError<SeedResponse>("API seems to be not responding"),
             _ => await GetGeneratedSeedAsync(client, api, apiKey, progressResponse.seed_id)
         };
+    }
+
+    public static async Task LogRolledSeedAsync(FeInfoHttpClient client, LogSeedRoled seedInfo)
+    {
+        try
+        {
+            var response = await client.PostAsJsonAsync("seed", seedInfo);
+        }
+        catch (Exception)
+        {
+            //currently not interested in handling errors here
+        }
     }
 
     private static async Task<SeedResponse> GetGeneratedSeedAsync(HttpClient client, FeHostedApi api, string apiKey, string seedId)
