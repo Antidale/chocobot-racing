@@ -26,6 +26,9 @@ public enum FePresetChoices
     AngryBird,
 
     //rest of the default presets
+    [ChoiceDisplayName("Sumomo")]
+    Sumomo,
+
     [ChoiceDisplayName("Adamant Cup Group")]
     AdamantCupGroup,
     [ChoiceDisplayName("Adamant Cup Bracket")]
