@@ -10,7 +10,7 @@ public partial class SeedResponse : FeApiResponse
     public string Verification { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
 
-    public string BinaryFlags => UrlFlagsRegex().Matches(Url).FirstOrDefault()?.Captures.FirstOrDefault()?.Value ?? "";
+    public string BinaryFlags => UrlFlagsRegex().Matches(Url).FirstOrDefault()?.Groups.Values.LastOrDefault()?.Value ?? "";
 
     public List<DiscordMessageBuilder> ToMessageBuilders(string flags, string? seed)
     {
@@ -106,6 +106,6 @@ public partial class SeedResponse : FeApiResponse
     }
 
 
-    [GeneratedRegex(@".+=(.+)\.", RegexOptions.IgnoreCase, "en-US")]
+    [GeneratedRegex(@"=(\w+)\.", RegexOptions.IgnoreCase, "en-US")]
     private static partial Regex UrlFlagsRegex();
 }
