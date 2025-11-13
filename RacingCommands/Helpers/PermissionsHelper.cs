@@ -2,9 +2,9 @@ namespace chocobot_racing.RacingCommands.Helpers;
 
 public static class PermissionsHelper
 {
-    public static DiscordPermissions BasicPermissions => new DiscordPermissions().Add(DiscordPermission.ViewChannel, DiscordPermission.SendMessages);
+    public static DiscordPermissions BasicPermissions => new([DiscordPermission.ViewChannel, DiscordPermission.SendMessages]);
 
-    private static DiscordPermissions AdminPermissions => new DiscordPermissions().Add(DiscordPermission.ViewChannel, DiscordPermission.ManageChannels, DiscordPermission.SendMessages, DiscordPermission.ManageMessages);
+    private static DiscordPermissions AdminPermissions => new([DiscordPermission.ViewChannel, DiscordPermission.ManageChannels, DiscordPermission.SendMessages, DiscordPermission.ManageMessages]);
 
     public static DiscordOverwriteBuilder GetDenyEveryonePermissionSet(DiscordRole role) => new DiscordOverwriteBuilder(role).Deny(BasicPermissions);
 
